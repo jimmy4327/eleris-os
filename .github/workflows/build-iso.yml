@@ -18,19 +18,19 @@ jobs:
           df -h /
 
       - name: Unpack project
-        run: tar xzf eleris-project.tar.gz
+        run: tar xzf eleria-project.tar.gz
 
       - name: Build ISO inside Debian 12
         run: |
           docker run --rm --privileged \
-            -v "$PWD/eleris-project:/work" -w /work debian:bookworm \
+            -v "$PWD/eleria-project:/work" -w /work debian:bookworm \
             bash -c "apt-get update && apt-get install -y ca-certificates && bash build.sh"
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
-          name: eleris-os-iso
-          path: eleris-project/eleris-os.iso
+          name: eleria-os-iso
+          path: eleria-project/eleria-os.iso
           compression-level: 0
           retention-days: 14
           if-no-files-found: error
@@ -40,5 +40,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-log
-          path: eleris-project/build.log
+          path: eleria-project/build.log
           if-no-files-found: ignore
