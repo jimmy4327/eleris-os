@@ -1,1 +1,44 @@
+name: Build Eleris OS ISO
 
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Unpack project
+        run: tar xzf eleris-project.tar.gz
+
+      - name: Build ISO inside Debian 12
+        run: |
+          docker run --rm --privileged \
+            -v "$PWD/eleris-project:/work" -w /work debian:bookworm \
+            bash -c "apt-get update && apt-get install -y ca-certificates && bash build.sh"
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: eleris-os-iso
+          path: eleris-project/eleris-os.iso
+          compression-level: 0
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: eleris-project/build.log
+          if-no-files-found: ignore
