@@ -23,7 +23,7 @@ jobs:
       - name: Build ISO inside Debian 12
         run: |
           docker run --rm --privileged \
-            -v "$PWD/eleria-project:/work" -w /work debian:bookworm \
+            -v "$PWD/eleria-project:/work" -w /work debian:trixie \
             bash -c "apt-get update && apt-get install -y ca-certificates && bash build.sh"
 
       - name: Upload ISO
